@@ -9,7 +9,7 @@ using TelephoneCompaniDataBase.Entityes.Base;
 
 namespace TelephoneCompaniDataBase.Repositories
 {
-    internal class PhoneNumberRepository : IRepository<PhoneNumber>
+    public class PhoneNumberRepository : IRepository<PhoneNumber>
     {
         private readonly IDbConnection _connection;
 
@@ -30,6 +30,7 @@ namespace TelephoneCompaniDataBase.Repositories
 
         public async Task AddAsync(PhoneNumber entity)
         {
+            if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(PhoneNumber).GetProperties().Where(p => p.Name != "Id").Select(p => p.Name));
             string parameters = string.Join(", ", typeof(PhoneNumber).GetProperties().Where(p => p.Name != "Id").Select(p => "@" + p.Name));
 
@@ -39,6 +40,7 @@ namespace TelephoneCompaniDataBase.Repositories
 
         public async Task UpdateAsync(PhoneNumber entity)
         {
+            if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(PhoneNumber).GetProperties().Where(p => p.Name != "Id").Select(p => $"{p.Name} = @{p.Name}"));
 
             string sql = $"UPDATE PhoneNumber SET {columns} WHERE Id = @Id";

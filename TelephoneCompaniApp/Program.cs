@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TelephoneCompaniApp
 {
-    internal class Program
+    internal class Program 
     {
         private bool _contentLoaded;
 

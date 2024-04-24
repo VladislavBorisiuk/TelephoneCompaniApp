@@ -9,7 +9,7 @@ using TelephoneCompaniDataBase.Entityes.Base;
 
 namespace TelephoneCompaniDataBase.Repositories
 {
-    internal class AddressRepository : IRepository<Address>
+    public class AddressRepository : IRepository<Address>
     {
         private readonly IDbConnection _connection;
 
@@ -30,6 +30,7 @@ namespace TelephoneCompaniDataBase.Repositories
 
         public async Task AddAsync(Address entity)
         {
+            if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(Address).GetProperties().Where(p => p.Name != "Id").Select(p => p.Name));
             string parameters = string.Join(", ", typeof(Address).GetProperties().Where(p => p.Name != "Id").Select(p => "@" + p.Name));
 
@@ -39,6 +40,7 @@ namespace TelephoneCompaniDataBase.Repositories
 
         public async Task UpdateAsync(Address entity)
         {
+            if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(Address).GetProperties().Where(p => p.Name != "Id").Select(p => $"{p.Name} = @{p.Name}"));
 
             string sql = $"UPDATE Address SET {columns} WHERE Id = @Id";

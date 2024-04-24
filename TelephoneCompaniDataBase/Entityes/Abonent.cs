@@ -2,5 +2,8 @@
 
 namespace TelephoneCompaniDataBase.Entityes
 {
-    internal class Abonent : NamedEntity{}
+    public class Abonent : Entity
+    {
+        public string FullName {  get; set; }
+    }
 }

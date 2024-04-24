@@ -2,7 +2,7 @@
 
 namespace TelephoneCompaniDataBase.Entityes
 {
-    internal class PhoneNumber : Entity
+    public class PhoneNumber : Entity
     {
         public string PhoneNumberString { get; set; }
         

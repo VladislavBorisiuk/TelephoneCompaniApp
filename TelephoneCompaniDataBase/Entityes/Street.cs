@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TelephoneCompaniDataBase.Entityes.Base;
+﻿using TelephoneCompaniDataBase.Entityes.Base;
 
 namespace TelephoneCompaniDataBase.Entityes
 {
-    internal class Street : NamedEntity
+    public class Street : Entity
     {
+        public string StreetName { get; set; }
     }
 }
