@@ -10,8 +10,4 @@
     <Folder Include="DataContext\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="D:\Codes\Rep_interfases\Rep_interfases.csproj" />
-  </ItemGroup>
-
 </Project>
