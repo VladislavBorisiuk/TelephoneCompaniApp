@@ -7,10 +7,7 @@ using TelephoneCompaniDataBase.Entityes.Base;
 
 namespace TelephoneCompaniDataBase.Entityes
 {
-    internal class PhoneNumbers : Entity
+    internal class Street : NamedEntity
     {
-        public string HomePhoneNumber { get; set; }
-        public string WorkPhoneNumber { get; set; }
-        public string MobilePhoneNumber { get; set; }
     }
 }
