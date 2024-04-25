@@ -8,10 +8,10 @@ namespace Rep_interfases
 {
     public interface IRepository<T> where T : class, IEntity, new()
     {
-        public async Task<IEnumerable<T>> GetAllAsync(CancellationToken Cancel = default) { throw new NotImplementedException(); }
-        public async Task<T> GetByIdAsync(int id, CancellationToken Cancel = default) { throw new NotImplementedException(); }
-        public async Task<T> AddAsync(T item, CancellationToken Cancel = default) { throw new NotImplementedException(); }
-        public async Task<T> UpdateAsync(T item, CancellationToken Cancel = default) { throw new NotImplementedException(); }
-        public async Task<T> DeleteAsync(int id, CancellationToken Cancel = default) { throw new NotImplementedException(); }
+        public Task<IEnumerable<T>> GetAllAsync(CancellationToken Cancel = default) { throw new NotImplementedException(); }
+        public Task<T> GetByIdAsync(int id, CancellationToken Cancel = default) { throw new NotImplementedException(); }
+        public Task<T> AddAsync(T item, CancellationToken Cancel = default) { throw new NotImplementedException(); }
+        public Task<T> UpdateAsync(T item, CancellationToken Cancel = default) { throw new NotImplementedException(); }
+        public Task<T> DeleteAsync(int id, CancellationToken Cancel = default) { throw new NotImplementedException(); }
     }
 }

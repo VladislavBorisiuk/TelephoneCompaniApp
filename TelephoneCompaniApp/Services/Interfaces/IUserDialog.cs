@@ -6,5 +6,6 @@ namespace TelephoneCompaniApp.Services.Interfaces
 {
     internal interface IUserDialog
     {
+        string? FilterPhoneNumber();
     }
 }

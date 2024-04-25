@@ -7,6 +7,10 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using TelephoneCompaniApp;
 using TelephoneCompaniApp.Data;
+using Microsoft.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace TelephoneCompaniApp
 {
@@ -16,6 +20,8 @@ namespace TelephoneCompaniApp
         public static Window ActivedWindow => Current.Windows.Cast<Window>().FirstOrDefault(w => w.IsActive);
 
         public static Window FocusedWindow => Current.Windows.Cast<Window>().FirstOrDefault(w => w.IsFocused);
+
+        public static Window CurrentWindow => FocusedWindow ?? ActivedWindow;
 
         private static IHost __Host;
 
@@ -40,7 +46,10 @@ namespace TelephoneCompaniApp
 
         public static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            DbRegistrator.AddDataBase(services, context.Configuration.GetSection("Database"));
+            var connectionString = context.Configuration.GetConnectionString("DefaultConnection");
+            services.AddTransient<IDbConnection>(provider => new Microsoft.Data.SqlClient.SqlConnection(connectionString));
+
+            DbRegistrator.AddDataBase(services, context.Configuration);
             ViewModelRegistrator.AddViews(services);
             ServiceRegistrator.AddServices(services);
         }

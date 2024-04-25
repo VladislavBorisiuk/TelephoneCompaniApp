@@ -2,7 +2,9 @@
 using Rep_interfases;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using TelephoneCompaniDataBase.Entityes;
 using TelephoneCompaniDataBase.Entityes.Base;
@@ -18,17 +20,17 @@ namespace TelephoneCompaniDataBase.Repositories
             _connection = connection;
         }
 
-        public async Task<IEnumerable<PhoneNumber>> GetAllAsync()
+        public async Task<IEnumerable<PhoneNumber>> GetAllAsync(CancellationToken Cancel = default)
         {
             return await _connection.QueryAsync<PhoneNumber>("SELECT * FROM PhoneNumber");
         }
 
-        public async Task<PhoneNumber> GetByIdAsync(int id)
+        public async Task<PhoneNumber> GetByIdAsync(int id, CancellationToken Cancel = default)
         {
             return await _connection.QueryFirstOrDefaultAsync<PhoneNumber>("SELECT * FROM PhoneNumber WHERE Id = @Id", new { Id = id });
         }
 
-        public async Task AddAsync(PhoneNumber entity)
+        public async Task AddAsync(PhoneNumber entity,CancellationToken Cancel = default)
         {
             if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(PhoneNumber).GetProperties().Where(p => p.Name != "Id").Select(p => p.Name));
@@ -38,7 +40,7 @@ namespace TelephoneCompaniDataBase.Repositories
             await _connection.ExecuteAsync(sql, entity);
         }
 
-        public async Task UpdateAsync(PhoneNumber entity)
+        public async Task UpdateAsync(PhoneNumber entity, CancellationToken Cancel = default)
         {
             if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(PhoneNumber).GetProperties().Where(p => p.Name != "Id").Select(p => $"{p.Name} = @{p.Name}"));
@@ -47,7 +49,7 @@ namespace TelephoneCompaniDataBase.Repositories
             await _connection.ExecuteAsync(sql, entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, CancellationToken Cancel = default)
         {
             string sql = $"DELETE FROM PhoneNumber WHERE Id = @Id";
             await _connection.ExecuteAsync(sql, new { Id = id });

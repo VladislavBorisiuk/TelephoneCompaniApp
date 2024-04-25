@@ -1,15 +1,25 @@
-﻿using System.Collections.ObjectModel;
+﻿using Rep_interfases;
+using System.Collections.ObjectModel;
 using System.Net;
+using System.Windows;
 using TelephoneCompaniApp.Services.Interfaces;
 using TelephoneCompaniApp.ViewModels.Base;
 using TelephoneCompaniDataBase.Entityes;
+using TelephoneCompaniDataBase.Repositories;
+using TelephoneCompaniApp.Infrastructure.Extensions;
+using System.Windows.Input;
+using TelephoneCompaniApp.Infrastructure.Commands;
+using TelephoneCompaniApp.Infrastructure.Commands.Base;
 
 namespace TelephoneCompaniApp.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        #region Сервисы/репозитории
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
+       
+        #endregion
 
         #region Title : string - Заголовок окна
 
@@ -32,32 +42,55 @@ namespace TelephoneCompaniApp.ViewModels
         #endregion
 
         #region Коллекции сущностей БД
-        private ObservableCollection<Abonent> _abonents;
-        private ObservableCollection<PhoneNumber> _phoneNumbers;
-        private ObservableCollection<Address> _addresses;
+        private ObservableCollection<MainDataGridItem> _mainDataGridItems;
 
-        public ObservableCollection<Abonent> Abonents
+        public ObservableCollection<MainDataGridItem> _MainDataGridItems
         {
-            get { return _abonents; }
-            set => Set(ref _abonents, value);
-        }
-
-        public ObservableCollection<PhoneNumber> PhoneNumbers
-        {
-            get { return _phoneNumbers; }
-            set => Set(ref _phoneNumbers, value);
-        }
-
-        public ObservableCollection<Address> Addresses
-        {
-            get { return _addresses; }
-            set => Set(ref _addresses, value);
+            get { return _mainDataGridItems; }
+            set => Set(ref _mainDataGridItems,value);
         }
         #endregion
-        public MainWindowViewModel(IUserDialog UserDialog, IDataService DataService)
+
+        private ICommand _ShowStreetWindowCommand;
+
+        public ICommand ShowStreetWindowCommand => _ShowStreetWindowCommand
+            ??= new LambdaCommandAsync(OnShowStreetWindowCommandExecuted,CanShowStreetWindowCommandExecute);
+
+
+        private bool CanShowStreetWindowCommandExecute() => true;
+
+        private  async Task OnShowStreetWindowCommandExecuted()
+        {
+            var phoneNumber = _UserDialog.FilterPhoneNumber();
+           if (phoneNumber != null)
+           {
+                _MainDataGridItems = await _DataService.FindAbonentsByPhoneNumber(phoneNumber);
+                if(_MainDataGridItems.Count == 0)
+                {
+                    MessageBox.Show("Абонентов с таким номером не найдено");
+                    _MainDataGridItems = await _DataService.GetDataForDataGrid();
+                }
+           }
+           else
+           {
+                return;
+           }
+        }
+
+        public MainWindowViewModel(IUserDialog UserDialog,
+            IDataService DataService)
         {
             _UserDialog = UserDialog;
             _DataService = DataService;
+            SetDataGridInfo();
+          
         }
+
+        private async void SetDataGridInfo()
+        {
+            _MainDataGridItems = await _DataService.GetDataForDataGrid();
+        }
+
+        
     }
 }

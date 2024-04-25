@@ -3,5 +3,5 @@
                     xmlns:l="clr-namespace:TelephoneCompaniApp.Infrastructure.Commands">
     
     <l:CloseWindow x:Key="CloseWindowCommand"/>
-
+    <l:DialogCommand x:Key="DialogCommand"/>
 </ResourceDictionary>

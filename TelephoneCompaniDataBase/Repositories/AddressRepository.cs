@@ -18,17 +18,17 @@ namespace TelephoneCompaniDataBase.Repositories
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Address>> GetAllAsync()
+        public async Task<IEnumerable<Address>> GetAllAsync(CancellationToken Cancel = default)
         {
             return await _connection.QueryAsync<Address>("SELECT * FROM Address");
         }
 
-        public async Task<Address> GetByIdAsync(int id)
+        public async Task<Address> GetByIdAsync(int id, CancellationToken Cancel = default)
         {
             return await _connection.QueryFirstOrDefaultAsync<Address>("SELECT * FROM Address WHERE Id = @Id", new { Id = id });
         }
 
-        public async Task AddAsync(Address entity)
+        public async Task AddAsync(Address entity, CancellationToken Cancel = default)
         {
             if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(Address).GetProperties().Where(p => p.Name != "Id").Select(p => p.Name));
@@ -38,7 +38,7 @@ namespace TelephoneCompaniDataBase.Repositories
             await _connection.ExecuteAsync(sql, entity);
         }
 
-        public async Task UpdateAsync(Address entity)
+        public async Task UpdateAsync(Address entity, CancellationToken Cancel = default)
         {
             if (entity is null) throw new ArgumentNullException(nameof(entity));
             string columns = string.Join(", ", typeof(Address).GetProperties().Where(p => p.Name != "Id").Select(p => $"{p.Name} = @{p.Name}"));
@@ -47,10 +47,17 @@ namespace TelephoneCompaniDataBase.Repositories
             await _connection.ExecuteAsync(sql, entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, CancellationToken Cancel = default)
         {
             string sql = $"DELETE FROM Address WHERE Id = @Id";
             await _connection.ExecuteAsync(sql, new { Id = id });
         }
+
+        public async Task GetByAbonentIdAsync(int id, CancellationToken Cancel = default)
+        {
+            string sql = $"SELECT * FROM Address WHERE AbonentId = {id}";
+            await _connection.ExecuteAsync(sql, new Address() );
+        }
+
     }
 }

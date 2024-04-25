@@ -15,7 +15,7 @@
                 </ItemsPanelTemplate>
             </Menu.ItemsPanel>
             <MenuItem Header="Файл">
-                <MenuItem Header="Поиск" Command="{StaticResource CloseWindowCommand}"/>
+                <MenuItem Header="Поиск" Command="{Binding ShowStreetWindowCommand}"/>
                 <MenuItem Header="Улицы" Command="{StaticResource CloseWindowCommand}"/>
                 <MenuItem Header="Выгрузить CSV" Command="{StaticResource CloseWindowCommand}"/>
                 <MenuItem Header="Выход" Command="{StaticResource CloseWindowCommand}"/>
@@ -28,14 +28,14 @@
             <StatusBarItem Content="{Binding Status}"/>
         </StatusBar>
         <Grid>
-            <DataGrid ItemsSource="{Binding AbonentList}">
+            <DataGrid ItemsSource="{Binding _MainDataGridItems}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="ФИО" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Номер дома" Binding="{Binding Address}"/>
-                    <DataGridTextColumn Header="Домашний номер телефона" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="Рабочий номер телефона" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="Мобильный номер телефона" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" />
+                    <DataGridTextColumn Header="Street" Binding="{Binding Street}" />
+                    <DataGridTextColumn Header="House Number" Binding="{Binding HouseNumber}" />
+                    <DataGridTextColumn Header="Home Phone Number" Binding="{Binding HomePhoneNumber}" />
+                    <DataGridTextColumn Header="Work Phone Number" Binding="{Binding WorkPhoneNumber}" />
+                    <DataGridTextColumn Header="Mobile Phone Number" Binding="{Binding MobilePhoneNumber}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
