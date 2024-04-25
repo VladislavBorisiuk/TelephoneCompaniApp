@@ -7,7 +7,7 @@ using TelephoneCompaniApp.ViewModels.Base;
 
 namespace TelephoneCompaniApp.ViewModels
 {
-    internal class StreetsWindowViewModel : ViewModel
+    internal class PhoneFilterViewModel : ViewModel
     {
         private string phoneNumber;
 
@@ -18,7 +18,7 @@ namespace TelephoneCompaniApp.ViewModels
             set => Set(ref phoneNumber,value);
         }
 
-        public StreetsWindowViewModel() 
+        public PhoneFilterViewModel() 
         {
         
         }

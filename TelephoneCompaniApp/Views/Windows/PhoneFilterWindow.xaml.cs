@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace TelephoneCompaniApp.Views.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для StreetsWindow.xaml
+    /// Логика взаимодействия для PhoneFilterWindow.xaml
     /// </summary>
-    public partial class StreetsWindow : Window
+    public partial class PhoneFilterWindow : Window
     {
-        public StreetsWindow()
+        public PhoneFilterWindow()
         {
             InitializeComponent();
         }

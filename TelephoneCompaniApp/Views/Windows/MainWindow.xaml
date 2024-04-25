@@ -15,8 +15,9 @@
                 </ItemsPanelTemplate>
             </Menu.ItemsPanel>
             <MenuItem Header="Файл">
-                <MenuItem Header="Поиск" Command="{Binding ShowStreetWindowCommand}"/>
-                <MenuItem Header="Улицы" Command="{StaticResource CloseWindowCommand}"/>
+                <MenuItem Header="Сбросить фильтры" Command="{Binding RefreshCommand}"/>
+                <MenuItem Header="Поиск" Command="{Binding PhoneNumberFiltereCommand}"/>
+                <MenuItem Header="Улицы" Command="{Binding ShowStreetWindowCommand}"/>
                 <MenuItem Header="Выгрузить CSV" Command="{StaticResource CloseWindowCommand}"/>
                 <MenuItem Header="Выход" Command="{StaticResource CloseWindowCommand}"/>
             </MenuItem>
@@ -30,12 +31,12 @@
         <Grid>
             <DataGrid ItemsSource="{Binding _MainDataGridItems}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" />
-                    <DataGridTextColumn Header="Street" Binding="{Binding Street}" />
-                    <DataGridTextColumn Header="House Number" Binding="{Binding HouseNumber}" />
-                    <DataGridTextColumn Header="Home Phone Number" Binding="{Binding HomePhoneNumber}" />
-                    <DataGridTextColumn Header="Work Phone Number" Binding="{Binding WorkPhoneNumber}" />
-                    <DataGridTextColumn Header="Mobile Phone Number" Binding="{Binding MobilePhoneNumber}" />
+                    <DataGridTextColumn Header="Полное имя" Binding="{Binding FullName}" />
+                    <DataGridTextColumn Header="Улица" Binding="{Binding Street}" />
+                    <DataGridTextColumn Header="Номер дома" Binding="{Binding HouseNumber}" />
+                    <DataGridTextColumn Header="Домашний номер" Binding="{Binding HomePhoneNumber}" />
+                    <DataGridTextColumn Header="Рабочий номер" Binding="{Binding WorkPhoneNumber}" />
+                    <DataGridTextColumn Header="Мобильный номер" Binding="{Binding MobilePhoneNumber}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

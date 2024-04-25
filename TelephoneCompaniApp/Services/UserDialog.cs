@@ -1,6 +1,9 @@
-﻿using TelephoneCompaniApp.Services.Interfaces;
+﻿using Rep_interfases;
+using System.Collections.Generic;
+using TelephoneCompaniApp.Services.Interfaces;
 using TelephoneCompaniApp.ViewModels;
 using TelephoneCompaniApp.Views.Windows;
+using TelephoneCompaniDataBase.Entityes;
 
 namespace TelephoneCompaniApp.Services
 {
@@ -8,9 +11,9 @@ namespace TelephoneCompaniApp.Services
     {
         public string? FilterPhoneNumber()
         {
-            var filter_numbers_model = new StreetsWindowViewModel();
+            var filter_numbers_model = new PhoneFilterViewModel();
 
-            var filter_numbers_window = new StreetsViewWindow
+            var filter_numbers_window = new PhoneFilterWindow
             {
                 DataContext = filter_numbers_model,
             };
@@ -20,6 +23,20 @@ namespace TelephoneCompaniApp.Services
             string PhoneNumber = filter_numbers_model.PhoneNumber;
 
             return PhoneNumber;
+        }
+
+        public void ShowStreetList(IEnumerable<Street> streets)
+        {
+            var streets_view_model = new StreetsViewModel(streets);
+
+            var streets_window = new StreetsWindow()
+            {
+                DataContext = streets_view_model,
+            };
+
+            if (streets_window.ShowDialog() == false) return;
+
+            return;
         }
     }
 }

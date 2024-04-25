@@ -8,6 +8,7 @@ namespace TelephoneCompaniApp.Services
         public static IServiceCollection AddServices(this IServiceCollection services) => services
            .AddTransient<IDataService, DataService>()
            .AddTransient<IUserDialog, UserDialog>()
+           .AddTransient<IReportCreatorService, ReportCreatorService>()
         ;
     }
 }

@@ -16,10 +16,14 @@ namespace TelephoneCompaniApp.Services
     internal class DataService : IDataService
     {
 
-        public readonly IRepository<Abonent> _AbonentRepository;
-        public readonly IRepository<Street> _StreetRepository;
-        public readonly IRepository<Address> _AddressRepository;
-        public readonly IRepository<PhoneNumber> _PhoneNumberRepository;
+        public IRepository<Abonent> _AbonentRepository
+        { get; }
+        public IRepository<Street> _StreetRepository
+        { get; }
+        public IRepository<Address> _AddressRepository
+        { get; }
+        public IRepository<PhoneNumber> _PhoneNumberRepository
+        { get; }
         private enum PhoneType
         {
             home,

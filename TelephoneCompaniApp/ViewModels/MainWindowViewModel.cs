@@ -18,7 +18,7 @@ namespace TelephoneCompaniApp.ViewModels
         #region Сервисы/репозитории
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
-       
+
         #endregion
 
         #region Title : string - Заголовок окна
@@ -47,34 +47,60 @@ namespace TelephoneCompaniApp.ViewModels
         public ObservableCollection<MainDataGridItem> _MainDataGridItems
         {
             get { return _mainDataGridItems; }
-            set => Set(ref _mainDataGridItems,value);
+            set => Set(ref _mainDataGridItems, value);
         }
         #endregion
 
-        private ICommand _ShowStreetWindowCommand;
+        private ICommand _RefreshCommand;
 
-        public ICommand ShowStreetWindowCommand => _ShowStreetWindowCommand
-            ??= new LambdaCommandAsync(OnShowStreetWindowCommandExecuted,CanShowStreetWindowCommandExecute);
+        public ICommand RefreshCommand => _RefreshCommand
+            ??= new LambdaCommandAsync(OnRefreshCommandExecuted, CanRefreshCommandExecute);
 
 
-        private bool CanShowStreetWindowCommandExecute() => true;
+        private bool CanRefreshCommandExecute() => true;
 
-        private  async Task OnShowStreetWindowCommandExecuted()
+        private async Task OnRefreshCommandExecuted()
+        {
+            _MainDataGridItems = await _DataService.GetDataForDataGrid();
+        }
+
+        private ICommand _PhoneNumberFiltereCommand;
+
+        public ICommand PhoneNumberFiltereCommand => _PhoneNumberFiltereCommand
+            ??= new LambdaCommandAsync(OnPhoneNumberFiltereCommandExecuted, CanPhoneNumberFiltereCommandExecute);
+
+
+        private bool CanPhoneNumberFiltereCommandExecute() => true;
+
+        private async Task OnPhoneNumberFiltereCommandExecuted()
         {
             var phoneNumber = _UserDialog.FilterPhoneNumber();
-           if (phoneNumber != null)
-           {
+            if (phoneNumber != null)
+            {
                 _MainDataGridItems = await _DataService.FindAbonentsByPhoneNumber(phoneNumber);
-                if(_MainDataGridItems.Count == 0)
+                if (_MainDataGridItems.Count == 0)
                 {
                     MessageBox.Show("Абонентов с таким номером не найдено");
                     _MainDataGridItems = await _DataService.GetDataForDataGrid();
                 }
-           }
-           else
-           {
+            }
+            else
+            {
                 return;
-           }
+            }
+        }
+
+        private ICommand _ShowStreetWindowCommand;
+
+        public ICommand ShowStreetWindowCommand => _ShowStreetWindowCommand
+            ??= new LambdaCommandAsync(OnShowStreetWindowCommandExecuted, CanShowStreetWindowCommandExecute);
+
+
+        private bool CanShowStreetWindowCommandExecute() => true;
+
+        private async Task OnShowStreetWindowCommandExecuted()
+        {
+            _UserDialog.ShowStreetList(await _DataService._StreetRepository.GetAllAsync());
         }
 
         public MainWindowViewModel(IUserDialog UserDialog,
@@ -83,7 +109,7 @@ namespace TelephoneCompaniApp.ViewModels
             _UserDialog = UserDialog;
             _DataService = DataService;
             SetDataGridInfo();
-          
+
         }
 
         private async void SetDataGridInfo()
@@ -91,6 +117,6 @@ namespace TelephoneCompaniApp.ViewModels
             _MainDataGridItems = await _DataService.GetDataForDataGrid();
         }
 
-        
+
     }
 }

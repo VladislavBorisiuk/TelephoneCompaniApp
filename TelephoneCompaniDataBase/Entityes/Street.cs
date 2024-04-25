@@ -6,6 +6,6 @@ namespace TelephoneCompaniDataBase.Entityes
     {
         public string StreetName { get; set; }
 
-        
+        public int NumberOfSubscribers { get; set; }
     }
 }

@@ -1,0 +1,25 @@
+﻿<Window x:Class="TelephoneCompaniApp.Views.Windows.PhoneFilterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TelephoneCompaniApp.Views.Windows"
+        mc:Ignorable="d"
+        Title="PhoneFilterWindow" Height="150" Width="300">
+    <Border Margin="5" BorderThickness="2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Введите искомый номер телефона" Grid.Row="0" HorizontalAlignment="Center" />
+            <TextBox Grid.Row="1" Margin="2" Text="{Binding PhoneNumber}"/>
+            <UniformGrid Grid.Row="2" HorizontalAlignment="Right" Rows="1">
+                <Button  Content="Ok" IsDefault="True" Margin="2" Command="{StaticResource DialogCommand}" CommandParameter="true"/>
+                <Button  Content="Cancel" IsDefault="False" Margin="2" Command="{StaticResource DialogCommand}" CommandParameter="false"/>
+            </UniformGrid>
+
+        </Grid>
+    </Border>
+</Window>
