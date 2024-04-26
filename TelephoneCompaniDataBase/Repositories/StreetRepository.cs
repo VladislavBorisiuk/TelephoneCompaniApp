@@ -47,6 +47,10 @@ namespace TelephoneCompaniDataBase.Repositories
             await _connection.ExecuteAsync(sql, new { Id = id });
         }
 
-        
+        public async Task FindByNameAsync(string name, CancellationToken Cancel = default)
+        {
+            string sql = "SELECT * FROM Streets WHERE StreetName = @Name";
+            await _connection.ExecuteAsync(sql, new { Name = name });
+        }
     }
 }

@@ -38,5 +38,21 @@ namespace TelephoneCompaniApp.Services
 
             return;
         }
+
+        public bool AddAbonent(MainDataGridItem item)
+        {
+            var filter_numbers_model = new PhoneFilterViewModel();
+
+            var filter_numbers_window = new PhoneFilterWindow
+            {
+                DataContext = filter_numbers_model,
+            };
+
+            if (filter_numbers_window.ShowDialog() == false) return false;
+
+            string PhoneNumber = filter_numbers_model.PhoneNumber;
+
+            return true;
+        }
     }
 }

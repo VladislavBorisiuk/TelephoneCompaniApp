@@ -1,13 +1,42 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Identity.Client.NativeInterop;
+using Microsoft.Win32;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows;
 using TelephoneCompaniApp.Services.Interfaces;
 
 namespace TelephoneCompaniApp.Services
 {
     internal class ReportCreatorService : IReportCreatorService
     {
-        public void CreatReport(ObservableCollection<MainDataGridItem> items)
+        public void CreateReport(ObservableCollection<MainDataGridItem> items)
         {
+            string fileName = DateTime.Now.ToString("yyyy.MM.dd_HH.mm.ss");
+            fileName = $"report_{fileName}.csv";
 
+            var dialog = new SaveFileDialog();
+            dialog.Filter = "CSV файлы (.csv)|.csv|Все файлы (.)|.";
+            dialog.FileName = fileName;
+
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            using (var writer = new StreamWriter(dialog.FileName))
+            {
+                writer.WriteLine("FullName,Street,HouseNumber,HomePhoneNumber,WorkPhoneNumber,MobilePhoneNumber");
+
+                foreach (var item in items)
+                {
+                    writer.WriteLine($"{item.FullName},{item.Street},{item.HouseNumber},{item.HomePhoneNumber},{item.WorkPhoneNumber},{item.MobilePhoneNumber}");
+                }
+            }
+
+            MessageBox.Show("Файл успешно сохранён.");
         }
     }
 }
+

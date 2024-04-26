@@ -20,7 +20,6 @@ namespace TelephoneCompaniApp.Infrastructure.Commands
             var dialog_result = DialogResult;
             if (parameter is string stringParameter)
             {
-                // Преобразовать строку в bool
                 if (!bool.TryParse(stringParameter, out var boolValue))
                 {
                     return;
@@ -30,7 +29,6 @@ namespace TelephoneCompaniApp.Infrastructure.Commands
             }
             else
             {
-                // Обработка других типов параметров, если необходимо
                 return;
             }
 

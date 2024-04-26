@@ -18,6 +18,7 @@ namespace TelephoneCompaniApp.ViewModels
         #region Сервисы/репозитории
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
+        private readonly IReportCreatorService _ReportCreatorService;
 
         #endregion
 
@@ -41,7 +42,7 @@ namespace TelephoneCompaniApp.ViewModels
 
         #endregion
 
-        #region Коллекции сущностей БД
+        #region Коллекция обхектов DG
         private ObservableCollection<MainDataGridItem> _mainDataGridItems;
 
         public ObservableCollection<MainDataGridItem> _MainDataGridItems
@@ -51,6 +52,8 @@ namespace TelephoneCompaniApp.ViewModels
         }
         #endregion
 
+        #region Комманды вкладки меню
+        #region Сброс фильтра номера
         private ICommand _RefreshCommand;
 
         public ICommand RefreshCommand => _RefreshCommand
@@ -64,6 +67,9 @@ namespace TelephoneCompaniApp.ViewModels
             _MainDataGridItems = await _DataService.GetDataForDataGrid();
         }
 
+        #endregion
+
+        #region Поиск по номеру
         private ICommand _PhoneNumberFiltereCommand;
 
         public ICommand PhoneNumberFiltereCommand => _PhoneNumberFiltereCommand
@@ -80,7 +86,7 @@ namespace TelephoneCompaniApp.ViewModels
                 _MainDataGridItems = await _DataService.FindAbonentsByPhoneNumber(phoneNumber);
                 if (_MainDataGridItems.Count == 0)
                 {
-                    MessageBox.Show("Абонентов с таким номером не найдено");
+                    MessageBox.Show("Нет абонентов, удовлетворяющих критерии поиска.");
                     _MainDataGridItems = await _DataService.GetDataForDataGrid();
                 }
             }
@@ -89,7 +95,9 @@ namespace TelephoneCompaniApp.ViewModels
                 return;
             }
         }
+        #endregion
 
+        #region Вывод списка улиц
         private ICommand _ShowStreetWindowCommand;
 
         public ICommand ShowStreetWindowCommand => _ShowStreetWindowCommand
@@ -102,12 +110,59 @@ namespace TelephoneCompaniApp.ViewModels
         {
             _UserDialog.ShowStreetList(await _DataService._StreetRepository.GetAllAsync());
         }
+        #endregion
 
+        #region Создание отчеты
+        private ICommand _CreateReportCommand;
+
+        public ICommand CreateReportCommand => _CreateReportCommand
+            ??= new LambdaCommand(OnCreateReportCommandExecuted, CanCreateReportCommandExecute);
+
+
+        private bool CanCreateReportCommandExecute() => true;
+
+        private void OnCreateReportCommandExecuted()
+        {
+            _ReportCreatorService.CreateReport(_MainDataGridItems);
+        }
+        #endregion
+
+        #endregion
+        private ICommand _AddAbonentCommand;
+
+        public ICommand AddAbonentCommand => _AddAbonentCommand
+            ??= new LambdaCommandAsync(OnAddAbonentCommandExecuted, CanAddAbonentCommandExecute);
+
+
+        private bool CanAddAbonentCommandExecute() => true;
+
+        private async Task OnAddAbonentCommandExecuted()
+        {
+            var new_DGitem = new MainDataGridItem();
+            if(_UserDialog.AddAbonent(new_DGitem)) return;
+
+            var new_Abonent = new Abonent()
+            {
+                FullName = new_DGitem.FullName
+            };
+
+            var new_Street = new Street()
+            {
+                StreetName = new_DGitem.FullName
+            };
+
+            
+        }
+        #region Комманды работы с БД
+
+        #endregion
         public MainWindowViewModel(IUserDialog UserDialog,
-            IDataService DataService)
+            IDataService DataService,
+            IReportCreatorService ReportCreator)
         {
             _UserDialog = UserDialog;
             _DataService = DataService;
+            _ReportCreatorService = ReportCreator;
             SetDataGridInfo();
 
         }

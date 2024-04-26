@@ -18,9 +18,10 @@
                 <MenuItem Header="Сбросить фильтры" Command="{Binding RefreshCommand}"/>
                 <MenuItem Header="Поиск" Command="{Binding PhoneNumberFiltereCommand}"/>
                 <MenuItem Header="Улицы" Command="{Binding ShowStreetWindowCommand}"/>
-                <MenuItem Header="Выгрузить CSV" Command="{StaticResource CloseWindowCommand}"/>
+                <MenuItem Header="Выгрузить CSV" Command="{Binding CreateReportCommand}"/>
                 <MenuItem Header="Выход" Command="{StaticResource CloseWindowCommand}"/>
             </MenuItem>
+            
         </Menu>
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem DockPanel.Dock="Right">

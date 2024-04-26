@@ -8,6 +8,7 @@ namespace TelephoneCompaniApp.Services.Interfaces
 {
     internal interface IUserDialog
     {
+        bool AddAbonent(MainDataGridItem item);
         string? FilterPhoneNumber();
         void ShowStreetList(IEnumerable<Street> streets);
     }
