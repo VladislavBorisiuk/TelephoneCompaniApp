@@ -36,37 +36,37 @@
                 <Border>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="ФИО: " Style="{StaticResource FillFild}"/>
-                        <TextBox Text="{Binding NewMainDataGrid.FullName}"/>
+                        <TextBox Text="{Binding NewMainDataGridItem.FullName}"/>
                     </StackPanel>
                 </Border>
                 <Border>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Название улицы: " Style="{StaticResource FillFild}"/>
-                        <TextBox Text="{Binding NewMainDataGrid.StreetName}"/>
+                        <TextBox Text="{Binding NewMainDataGridItem.Street}"/>
                     </StackPanel>
                 </Border>
                 <Border>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Номер дома: " Style="{StaticResource FillFild}"/>
-                        <TextBox Text="{Binding NewMainDataGrid.HomeNumber}"/>
+                        <TextBox Text="{Binding NewMainDataGridItem.HouseNumber}"/>
                     </StackPanel>
                 </Border>
                 <Border>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Домашний: " Style="{StaticResource FillFild}"/>
-                        <TextBox Text="{Binding NewMainDataGrid.HomePhoneNumber}"/>
+                        <TextBox Text="{Binding NewMainDataGridItem.PhoneNumbers[0]}"/>
                     </StackPanel>
                 </Border>
                 <Border>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Рабочий: " Style="{StaticResource FillFild}"/>
-                        <TextBox Text="{Binding NewMainDataGrid.WorkPhoneNumber}"/>
+                        <TextBox Text="{Binding NewMainDataGridItem.PhoneNumbers[1]}"/>
                     </StackPanel>
                 </Border>
                 <Border>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Мобильный: " Style="{StaticResource FillFild}"/>
-                        <TextBox Text="{Binding NewMainDataGrid.MobilePhoneNumber}"/>
+                        <TextBox Text="{Binding NewMainDataGridItem.PhoneNumbers[2]}"/>
                     </StackPanel>
                 </Border>
 
@@ -75,7 +75,7 @@
 
 
         <UniformGrid Grid.Row="2" HorizontalAlignment="Right" Rows="1">
-            <Button  Content="Добавить" IsDefault="True" Margin="2" Command="{StaticResource DialogCommand}" CommandParameter="true"/>
+            <Button  Content="Сохранить" IsDefault="True" Margin="2" Command="{StaticResource DialogCommand}" CommandParameter="true"/>
             <Button  Content="Отмена" IsDefault="False" Margin="2" Command="{StaticResource DialogCommand}" CommandParameter="false"/>
         </UniformGrid>
     </Grid>

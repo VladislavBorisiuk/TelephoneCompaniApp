@@ -13,6 +13,9 @@ namespace TelephoneCompaniApp.Infrastructure.Extensions
             this IEnumerable<T> enumerable)
         {
             return new ObservableCollection<T>(enumerable);
+
+
+
         }
     }
 }

@@ -52,12 +52,5 @@ namespace TelephoneCompaniDataBase.Repositories
             string sql = $"DELETE FROM Address WHERE Id = @Id";
             await _connection.ExecuteAsync(sql, new { Id = id });
         }
-
-        public async Task GetByAbonentIdAsync(int id, CancellationToken Cancel = default)
-        {
-            string sql = $"SELECT * FROM Address WHERE AbonentId = {id}";
-            await _connection.ExecuteAsync(sql, new Address() );
-        }
-
     }
 }

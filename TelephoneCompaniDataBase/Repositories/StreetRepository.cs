@@ -1,11 +1,12 @@
 ﻿using Dapper;
 using Rep_interfases;
 using System.Data;
+using System.IO;
 using TelephoneCompaniDataBase.Entityes;
 
 namespace TelephoneCompaniDataBase.Repositories
 {
-    public class StreetRepository : IRepository<Street>
+    public class StreetRepository : INamedRepository<Street>
     {
         private readonly IDbConnection _connection;
 
@@ -24,15 +25,35 @@ namespace TelephoneCompaniDataBase.Repositories
             return await _connection.QueryFirstOrDefaultAsync<Street>("SELECT * FROM Streets WHERE Id = @Id", new { Id = id });
         }
 
-        public async Task AddAsync(Street street, CancellationToken Cancel = default)
+        public async Task<Street> GetByNameAsync(string name, CancellationToken Cancel = default)
+        {
+            return await _connection.QueryFirstOrDefaultAsync<Street>("SELECT * FROM Streets WHERE StreetName = @Name", new { Name = name });
+        }
+
+        public async Task<Street> AddAsync(Street street, CancellationToken Cancel = default)
         {
             if (street is null) throw new ArgumentNullException(nameof(street));
+
+            string sql = $"SELECT COUNT(*) FROM Streets WHERE StreetName = @StreetName";
+            int count = await _connection.ExecuteScalarAsync<int>(sql, new { StreetName = street.StreetName });
+
+            if (count > 0)
+            {
+                sql = $"UPDATE Streets SET NumberOfSubscribers = NumberOfSubscribers + 1 WHERE StreetName = @StreetName";
+                await _connection.ExecuteAsync(sql, new { StreetName = street.StreetName });
+                return null; // Возвращаем null, так как улица уже существует
+            }
+
             string columns = "StreetName";
             string parameters = "@StreetName";
 
-            string sql = $"INSERT INTO Streets ({columns}) VALUES ({parameters})";
-            await _connection.ExecuteAsync(sql, street);
+            sql = $"INSERT INTO Streets ({columns}) OUTPUT INSERTED.Id VALUES ({parameters})";
+            var id = await _connection.ExecuteScalarAsync<int>(sql, street);
+            street.Id = id;
+            return street;
         }
+
+
 
         public async Task UpdateAsync(Street street, CancellationToken Cancel = default)
         {
@@ -43,14 +64,17 @@ namespace TelephoneCompaniDataBase.Repositories
 
         public async Task DeleteAsync(int id, CancellationToken Cancel = default)
         {
-            string sql = "DELETE FROM Streets WHERE Id = @Id";
+            string sql = $"UPDATE Streets SET NumberOfSubscribers = NumberOfSubscribers - 1 WHERE Id = @id";
             await _connection.ExecuteAsync(sql, new { Id = id });
+            var street = await _connection.QueryFirstOrDefaultAsync<Street>("SELECT * FROM Streets WHERE Id = @Id", new { Id = id });
+            if(street.NumberOfSubscribers == 0)
+            {
+                sql = "DELETE FROM Streets WHERE Id = @Id";
+                await _connection.ExecuteAsync(sql, new { Id = id });
+                return;
+            }
+            return;
         }
 
-        public async Task FindByNameAsync(string name, CancellationToken Cancel = default)
-        {
-            string sql = "SELECT * FROM Streets WHERE StreetName = @Name";
-            await _connection.ExecuteAsync(sql, new { Name = name });
-        }
     }
 }

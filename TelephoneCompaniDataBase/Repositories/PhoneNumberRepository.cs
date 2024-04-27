@@ -38,6 +38,8 @@ namespace TelephoneCompaniDataBase.Repositories
 
             string sql = $"INSERT INTO PhoneNumber ({columns}) VALUES ({parameters})";
             await _connection.ExecuteAsync(sql, entity);
+
+
         }
 
         public async Task UpdateAsync(PhoneNumber entity, CancellationToken Cancel = default)
@@ -51,7 +53,7 @@ namespace TelephoneCompaniDataBase.Repositories
 
         public async Task DeleteAsync(int id, CancellationToken Cancel = default)
         {
-            string sql = $"DELETE FROM PhoneNumber WHERE Id = @Id";
+            string sql = $"DELETE FROM PhoneNumber WHERE AbonentId = @Id";
             await _connection.ExecuteAsync(sql, new { Id = id });
         }
     }

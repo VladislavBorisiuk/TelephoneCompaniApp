@@ -7,9 +7,9 @@ namespace TelephoneCompaniDataBase.Repositories
     public static class RepositoryRegistrator
     {
         public static IServiceCollection AddRepositoriesInDb(this IServiceCollection services) => services
-            .AddTransient<IRepository<Abonent>, AbonentRepository>()
+            .AddTransient<INamedRepository<Abonent>, AbonentRepository>()
             .AddTransient<IRepository<PhoneNumber>, PhoneNumberRepository>()
-            .AddTransient<IRepository<Street>, StreetRepository>()
+            .AddTransient<INamedRepository<Street>, StreetRepository>()
             .AddTransient<IRepository<Address>, AddressRepository>();
 
     }

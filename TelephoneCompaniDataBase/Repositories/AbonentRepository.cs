@@ -8,7 +8,7 @@ using TelephoneCompaniDataBase.Entityes;
 
 namespace TelephoneCompaniDataBase.Repositories
 {
-    public class AbonentRepository : IRepository<Abonent>
+    public class AbonentRepository : INamedRepository<Abonent>
     {
         private readonly IDbConnection _connection;
 
@@ -27,6 +27,11 @@ namespace TelephoneCompaniDataBase.Repositories
             return await _connection.QueryFirstOrDefaultAsync<Abonent>("SELECT * FROM Abonent WHERE Id = @Id", new { Id = id });
         }
 
+        public async Task<Abonent> GetByNameAsync(string name, CancellationToken Cancel = default)
+        {
+            return await _connection.QueryFirstOrDefaultAsync<Abonent>("SELECT * FROM Abonent WHERE FullName = @Name", new { Name = name });
+        }
+
         public async Task<Abonent> AddAsync(Abonent abonent, CancellationToken Cancel = default)
         {
             if (abonent is null) throw new ArgumentNullException(nameof(abonent));
@@ -36,39 +41,28 @@ namespace TelephoneCompaniDataBase.Repositories
             string sql = $"INSERT INTO Abonent ({columns}) VALUES ({parameters}); SELECT SCOPE_IDENTITY();";
             var id = await _connection.ExecuteScalarAsync<int>(sql, abonent);
             abonent.Id = id;
-            UpdateNumberOfSubscribers();
             return abonent;
         }
 
-        public async Task<Abonent> UpdateAsync(Abonent abonent, CancellationToken Cancel = default)
+        public async Task UpdateAsync(Abonent abonent, CancellationToken Cancel = default)
         {
             if (abonent is null) throw new ArgumentNullException(nameof(abonent));
             string sql = "UPDATE Abonent SET FullName = @FullName WHERE Id = @Id";
             await _connection.ExecuteAsync(sql, abonent);
-            return abonent;
         }
 
-        public async Task<Abonent> DeleteAsync(int id, CancellationToken Cancel = default)
+        public async Task DeleteAsync(int id, CancellationToken Cancel = default)
         {
-            string sql = "DELETE FROM Abonent WHERE Id = @Id";
-            var deletedAbonent = await GetByIdAsync(id);
-            await _connection.ExecuteAsync(sql, new { Id = id });
-            return deletedAbonent;
-        }
-
-        private async void UpdateNumberOfSubscribers()
-        {
-            string query = @"
-            UPDATE Streets
-            SET NumberOfSubscribers = (
-                SELECT COUNT(*) 
-                FROM Abonent
-                JOIN Address ON Abonent.Id = Address.AbonentId
-                WHERE Address.StreetId = Streets.Id
-            )
-        ";
-
-            await _connection.ExecuteAsync(query);
+            try
+            {
+                string sql = "DELETE FROM Abonent WHERE Id = @Id";
+                await _connection.ExecuteAsync(sql, new { Id = id });
+            }
+            catch(Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+            
         }
     }
 }

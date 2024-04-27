@@ -10,6 +10,7 @@ using TelephoneCompaniApp.Infrastructure.Extensions;
 using System.Windows.Input;
 using TelephoneCompaniApp.Infrastructure.Commands;
 using TelephoneCompaniApp.Infrastructure.Commands.Base;
+using System.ComponentModel;
 
 namespace TelephoneCompaniApp.ViewModels
 {
@@ -47,8 +48,18 @@ namespace TelephoneCompaniApp.ViewModels
 
         public ObservableCollection<MainDataGridItem> _MainDataGridItems
         {
-            get { return _mainDataGridItems; }
+            get { return _mainDataGridItems;}
             set => Set(ref _mainDataGridItems, value);
+        }
+        #endregion
+        
+        #region Выбранный DGitem
+        private MainDataGridItem _currentMainDataGridItem;
+
+        public MainDataGridItem _CurrentMainDataGridItem
+        {
+            get { return _currentMainDataGridItem; }
+            set => Set(ref _currentMainDataGridItem, value);
         }
         #endregion
 
@@ -128,6 +139,8 @@ namespace TelephoneCompaniApp.ViewModels
         #endregion
 
         #endregion
+
+        #region Комманды работы с БД
         private ICommand _AddAbonentCommand;
 
         public ICommand AddAbonentCommand => _AddAbonentCommand
@@ -138,23 +151,50 @@ namespace TelephoneCompaniApp.ViewModels
 
         private async Task OnAddAbonentCommandExecuted()
         {
-            var new_DGitem = new MainDataGridItem();
-            if(_UserDialog.AddAbonent(new_DGitem)) return;
-
-            var new_Abonent = new Abonent()
+            var new_DGitem = new MainDataGridItem()
             {
-                FullName = new_DGitem.FullName
+                PhoneNumbers = new string[3]
             };
+            if (!_UserDialog.RedactAbonent(new_DGitem)) return;
 
-            var new_Street = new Street()
-            {
-                StreetName = new_DGitem.FullName
-            };
-
-            
+            await _DataService.AddAbonent(new_DGitem);
+            _MainDataGridItems.Add(new_DGitem);
+            OnPropertyChanged(nameof(_MainDataGridItems));
         }
-        #region Комманды работы с БД
 
+        private ICommand _UpdateAbonentCommand;
+
+        public ICommand UpdateAbonentCommand => _UpdateAbonentCommand
+            ??= new LambdaCommandAsync(OnUpdateAbonentCommandExecuted, CanUpdateAbonentCommandExecute);
+
+
+        private bool CanUpdateAbonentCommandExecute() => _CurrentMainDataGridItem != null;
+
+        private async Task OnUpdateAbonentCommandExecuted()
+        {
+            
+            if (!_UserDialog.RedactAbonent(_CurrentMainDataGridItem)) return;
+            await _DataService.UpdateAbonent(_CurrentMainDataGridItem);
+            OnPropertyChanged(nameof(_MainDataGridItems));
+        }
+
+        private ICommand _RemoveAbonentCommand;
+
+        public ICommand RemoveAbonentCommand => _RemoveAbonentCommand
+            ??= new LambdaCommandAsync(OnRemoveAbonentCommandExecuted, CanRemoveAbonentCommandExecute);
+
+
+        private bool CanRemoveAbonentCommandExecute() => _CurrentMainDataGridItem != null;
+
+        private async Task OnRemoveAbonentCommandExecuted()
+        {
+
+            if (!_UserDialog.RemoveAbonent()) return;
+
+            await _DataService.RemoveAbonent(_CurrentMainDataGridItem.AbonentId);
+            _MainDataGridItems.Remove(_CurrentMainDataGridItem);
+            OnPropertyChanged(nameof(_MainDataGridItems));
+        }
         #endregion
         public MainWindowViewModel(IUserDialog UserDialog,
             IDataService DataService,

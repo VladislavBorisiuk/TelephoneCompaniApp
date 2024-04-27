@@ -7,9 +7,9 @@ namespace TelephoneCompaniApp.Services.Interfaces
 {
     internal interface IDataService
     {
-        public IRepository<Abonent> _AbonentRepository
+        public INamedRepository<Abonent> _AbonentRepository
         {  get; }
-        public IRepository<Street> _StreetRepository
+        public INamedRepository<Street> _StreetRepository
          { get; }
         public IRepository<Address> _AddressRepository
          { get; }
@@ -21,5 +21,17 @@ namespace TelephoneCompaniApp.Services.Interfaces
         {
             throw new NotImplementedException();
         }
+
+        public Task AddAbonent(MainDataGridItem New_DGitem) 
+        { 
+            throw new NotImplementedException(); 
+        }
+
+        public Task RemoveAbonent(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task UpdateAbonent(MainDataGridItem new_DGitem);
     }
 }

@@ -31,7 +31,7 @@ namespace TelephoneCompaniApp.Services
 
                 foreach (var item in items)
                 {
-                    writer.WriteLine($"{item.FullName},{item.Street},{item.HouseNumber},{item.HomePhoneNumber},{item.WorkPhoneNumber},{item.MobilePhoneNumber}");
+                    writer.WriteLine($"{item.FullName},{item.Street},{item.HouseNumber},{item.PhoneNumbers[0]},{item.PhoneNumbers[1]},{item.PhoneNumbers[2]}");
                 }
             }
 
