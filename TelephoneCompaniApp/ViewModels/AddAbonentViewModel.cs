@@ -17,7 +17,7 @@ namespace TelephoneCompaniApp.ViewModels
 
             set => Set(ref _newMainDataGridItem,value);
         }
-
+        
         public AddAbonentViewModel(MainDataGridItem item) 
         {
             NewMainDataGridItem = item;

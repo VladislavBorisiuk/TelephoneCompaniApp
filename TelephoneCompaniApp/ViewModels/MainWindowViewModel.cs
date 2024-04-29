@@ -1,16 +1,12 @@
-﻿using Rep_interfases;
-using System.Collections.ObjectModel;
-using System.Net;
-using System.Windows;
+﻿using System.Collections.ObjectModel;
 using TelephoneCompaniApp.Services.Interfaces;
 using TelephoneCompaniApp.ViewModels.Base;
-using TelephoneCompaniDataBase.Entityes;
-using TelephoneCompaniDataBase.Repositories;
-using TelephoneCompaniApp.Infrastructure.Extensions;
 using System.Windows.Input;
 using TelephoneCompaniApp.Infrastructure.Commands;
-using TelephoneCompaniApp.Infrastructure.Commands.Base;
 using System.ComponentModel;
+using System.Windows.Data;
+using System.Windows.Controls;
+using MessageBox = System.Windows.MessageBox;
 
 namespace TelephoneCompaniApp.ViewModels
 {
@@ -48,12 +44,32 @@ namespace TelephoneCompaniApp.ViewModels
 
         public ObservableCollection<MainDataGridItem> _MainDataGridItems
         {
-            get { return _mainDataGridItems;}
-            set => Set(ref _mainDataGridItems, value);
+            get { return _mainDataGridItems; }
+            set
+            {
+                _mainDataGridItems = value;
+                MainDataGridItemsView.Source = value;
+                OnPropertyChanged(nameof(_MainDataGridItems));
+                OnPropertyChanged(nameof(MainDataGridItemsView));
+            }
+        }
+
+
+        private CollectionViewSource _mainDataGridItemsView;
+
+        public CollectionViewSource MainDataGridItemsView
+        {
+            get { return _mainDataGridItemsView; }
+            set
+            {
+                _mainDataGridItemsView = value;
+                OnPropertyChanged(nameof(MainDataGridItemsView));
+            }
         }
         #endregion
-        
+
         #region Выбранный DGitem
+
         private MainDataGridItem _currentMainDataGridItem;
 
         public MainDataGridItem _CurrentMainDataGridItem
@@ -97,7 +113,7 @@ namespace TelephoneCompaniApp.ViewModels
                 _MainDataGridItems = await _DataService.FindAbonentsByPhoneNumber(phoneNumber);
                 if (_MainDataGridItems.Count == 0)
                 {
-                    MessageBox.Show("Нет абонентов, удовлетворяющих критерии поиска.");
+                    System.Windows.MessageBox.Show("Нет абонентов, удовлетворяющих критерии поиска.");
                     _MainDataGridItems = await _DataService.GetDataForDataGrid();
                 }
             }
@@ -134,13 +150,17 @@ namespace TelephoneCompaniApp.ViewModels
 
         private void OnCreateReportCommandExecuted()
         {
-            _ReportCreatorService.CreateReport(_MainDataGridItems);
+            ICollectionView sortedCollection = MainDataGridItemsView.View;
+            IEnumerable<MainDataGridItem> sortedItems = sortedCollection.Cast<MainDataGridItem>();
+
+            // Передаем отсортированные данные в ReportCreatorService
+            _ReportCreatorService.CreateReport(sortedItems);
         }
         #endregion
-
         #endregion
 
         #region Комманды работы с БД
+        #region Добавление абонента
         private ICommand _AddAbonentCommand;
 
         public ICommand AddAbonentCommand => _AddAbonentCommand
@@ -161,7 +181,8 @@ namespace TelephoneCompaniApp.ViewModels
             _MainDataGridItems.Add(new_DGitem);
             OnPropertyChanged(nameof(_MainDataGridItems));
         }
-
+        #endregion
+        #region Обновление абонента
         private ICommand _UpdateAbonentCommand;
 
         public ICommand UpdateAbonentCommand => _UpdateAbonentCommand
@@ -172,12 +193,13 @@ namespace TelephoneCompaniApp.ViewModels
 
         private async Task OnUpdateAbonentCommandExecuted()
         {
-            
+
             if (!_UserDialog.RedactAbonent(_CurrentMainDataGridItem)) return;
             await _DataService.UpdateAbonent(_CurrentMainDataGridItem);
             OnPropertyChanged(nameof(_MainDataGridItems));
         }
-
+        #endregion
+        #region Удаление абонента
         private ICommand _RemoveAbonentCommand;
 
         public ICommand RemoveAbonentCommand => _RemoveAbonentCommand
@@ -196,6 +218,71 @@ namespace TelephoneCompaniApp.ViewModels
             OnPropertyChanged(nameof(_MainDataGridItems));
         }
         #endregion
+        #region Сортировка столбцов
+        private void OnDataGridSortingCommand(object parameter)
+        {
+            var DataGridSorting = parameter as DataGridSortingEventArgs;
+
+            if (DataGridSorting != null)
+            {
+
+
+                string sortedPropertyName = DataGridSorting.Column.SortMemberPath;
+
+                ListSortDirection sortDirection = new ListSortDirection();
+
+                if (sortDirection == ListSortDirection.Ascending && DataGridSorting.Column.SortDirection != null)
+                {
+                    sortDirection = ListSortDirection.Descending;
+                }
+                else
+                {
+                    sortDirection = ListSortDirection.Ascending;
+                }
+
+
+                switch (sortedPropertyName)
+                {
+                    case "FullName":
+                        SortByPropertyName(sortedPropertyName, sortDirection);
+                        break;
+                    case "Street":
+                        SortByPropertyName(sortedPropertyName, sortDirection);
+                        break;
+                    case "HouseNumber":
+                        SortByPropertyName(sortedPropertyName, sortDirection);
+                        break;
+                    case "PhoneNumbers[0]":
+                        SortByPropertyName(sortedPropertyName, sortDirection);
+                        break;
+                    case "PhoneNumbers[1]":
+                        SortByPropertyName(sortedPropertyName, sortDirection);
+                        break;
+                    case "PhoneNumbers[2]":
+                        SortByPropertyName(sortedPropertyName, sortDirection);
+                        break;
+                    default:
+                        MessageBox.Show("Свойство сортировки не опознанно");
+                        break;
+                }
+            }
+        }
+        private void SortByPropertyName(string propertyName, ListSortDirection sortDirection)
+        {
+            MainDataGridItemsView.SortDescriptions.Clear();
+            MainDataGridItemsView.SortDescriptions.Add(new SortDescription(propertyName, sortDirection));
+        }
+
+        private ICommand _DataGridSortingCommand;
+
+        public ICommand DataGridSortingCommand => _DataGridSortingCommand
+            ??= new LambdaCommand(OnDataGridSortingCommand, CanDataGridSortingExecute);
+
+        private bool CanDataGridSortingExecute(object parameter) => parameter != null;
+        #endregion
+        #endregion
+
+
         public MainWindowViewModel(IUserDialog UserDialog,
             IDataService DataService,
             IReportCreatorService ReportCreator)
@@ -209,9 +296,12 @@ namespace TelephoneCompaniApp.ViewModels
 
         private async void SetDataGridInfo()
         {
+            MainDataGridItemsView = new();
             _MainDataGridItems = await _DataService.GetDataForDataGrid();
+            MainDataGridItemsView.Source = _MainDataGridItems;
         }
 
 
     }
+
 }

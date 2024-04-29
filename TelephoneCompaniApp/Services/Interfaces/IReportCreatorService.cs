@@ -9,6 +9,6 @@ namespace TelephoneCompaniApp.Services.Interfaces
 {
     internal interface IReportCreatorService
     {
-        public void CreateReport(ObservableCollection<MainDataGridItem> items);
+        public void CreateReport(IEnumerable<MainDataGridItem> items);
     }
 }
