@@ -10,7 +10,7 @@ namespace TelephoneCompaniApp.Services
 {
     internal class ReportCreatorService : IReportCreatorService
     {
-        public void CreateReport(ObservableCollection<MainDataGridItem> items)
+        public void CreateReport(IEnumerable<MainDataGridItem> items)
         {
             string fileName = DateTime.Now.ToString("yyyy.MM.dd_HH.mm.ss");
             fileName = $"report_{fileName}.csv";

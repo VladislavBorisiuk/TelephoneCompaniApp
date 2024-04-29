@@ -4,12 +4,13 @@ using TelephoneCompaniApp.Infrastructure.Extensions;
 using TelephoneCompaniApp.Services.Interfaces;
 using TelephoneCompaniDataBase.Entityes;
 using TelephoneCompaniApp.Infrastructure.Extensions;
+using System.Windows;
 
 namespace TelephoneCompaniApp.Services
 {
     internal class DataService : IDataService
     {
-
+        #region Репозитории
         public INamedRepository<Abonent> _AbonentRepository
         { get; }
         public INamedRepository<Street> _StreetRepository
@@ -19,7 +20,7 @@ namespace TelephoneCompaniApp.Services
         public IRepository<PhoneNumber> _PhoneNumberRepository
         { get; }
         private readonly string[] PhoneType;
-
+        #endregion
 
         public DataService(INamedRepository<Abonent> abonentRepository,
             INamedRepository<Street> streetRepository,
@@ -34,13 +35,14 @@ namespace TelephoneCompaniApp.Services
             PhoneType = new string[3] { "home", "work", "mobile" };
         }
 
-
+        #region Получание всего списка из БД
         public async Task<ObservableCollection<MainDataGridItem>> GetDataForDataGrid()
         {
             var _abonents = (await _AbonentRepository.GetAllAsync()).ToList();
             return (await CreateDataGridItemsAsync(_abonents)).ToObservableCollection();
         }
-
+        #endregion
+        #region Поиск по номеру
         public async Task<ObservableCollection<MainDataGridItem>> FindAbonentsByPhoneNumber(string number)
         {
             var _abonents = (await _AbonentRepository.GetAllAsync()).ToObservableCollection();
@@ -57,10 +59,16 @@ namespace TelephoneCompaniApp.Services
             
             return (await CreateDataGridItemsAsync(matchingAbonents)).ToObservableCollection();
         }
+        #endregion
 
         #region Добавление абонента
         public async Task AddAbonent(MainDataGridItem new_DGitem) 
         {
+            if(CanSave(new_DGitem))
+            {
+                MessageBox.Show("Абонент не добавден, должны быть заполненны все поля");
+                return;
+            }
             var new_Abonent = new Abonent()
             {
                 FullName = new_DGitem.FullName
@@ -113,6 +121,11 @@ namespace TelephoneCompaniApp.Services
         #region Обновление абонента
         public async Task UpdateAbonent(MainDataGridItem new_DGitem)
         {
+            if (CanSave(new_DGitem))
+            {
+                MessageBox.Show("Абонент не обновлён, должны быть заполненны все поля");
+                return;
+            }
             var new_Abonent = new Abonent()
             {
                 Id = new_DGitem.AbonentId,
@@ -142,6 +155,20 @@ namespace TelephoneCompaniApp.Services
             }
         }
         #endregion
+
+        #region Проверка на пустые поля
+        private bool CanSave(MainDataGridItem item)
+        {
+            return !string.IsNullOrEmpty(item.FullName) &&
+                   !string.IsNullOrEmpty(item.Street) &&
+                   !string.IsNullOrEmpty(item.HouseNumber) &&
+                   !string.IsNullOrEmpty(item.PhoneNumbers[0]) &&
+                   !string.IsNullOrEmpty(item.PhoneNumbers[1]) &&
+                   !string.IsNullOrEmpty(item.PhoneNumbers[2]);
+        }
+        #endregion
+
+        #region Создание DataGridItems
         private async Task<List<MainDataGridItem>> CreateDataGridItemsAsync(List<Abonent> items)
         {
             var _phoneNumbers = (await _PhoneNumberRepository.GetAllAsync()).ToObservableCollection();
@@ -170,6 +197,7 @@ namespace TelephoneCompaniApp.Services
             return dataGridItems;
         }
 
+        #endregion
         
     }
 }
